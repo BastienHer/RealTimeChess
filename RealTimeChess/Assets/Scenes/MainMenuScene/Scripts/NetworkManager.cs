@@ -2,29 +2,31 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using PlayerIOClient;
+using UnityEngine.SceneManagement;
 
-public class ChatEntry
-{
-	public string text = "";
-	public bool mine = true;
-}
+//public class ChatEntry
+//{
+//	public string text = "";
+//	public bool mine = true;
+//}
 
 public class NetworkManager : MonoBehaviour
 {
 
 	//public GameObject target;
 	//public GameObject PlayerPrefab;
-	//public GameObject ToadPrefab;
+	//public GameObject ToadPref
 	private Connection pioconnection;
 	private List<Message> msgList = new List<Message>(); //  Messsage queue implementation
 	private bool joinedroom = false;
+	public bool isOpponentReady = false;
+	public static NetworkManager instance;
 
 	// UI stuff
 	private Vector2 scrollPosition;
 	private ArrayList entries = new ArrayList();
-	private string inputField = "";
+	//private string inputField = "";
 	private Rect window = new Rect(10, 10, 300, 150);
-	private int toadspicked = 0;
 	private string infomsg = "";
 	private string userid;
 	private Client clientRoom;
@@ -32,7 +34,12 @@ public class NetworkManager : MonoBehaviour
     private void Awake()
     {
 		DontDestroyOnLoad(this);
-    }
+		if (instance != null && instance != this)
+		{
+			Destroy(gameObject);
+		}
+		instance = this;
+	}
     void Start()
 	{
 		Application.runInBackground = true;
@@ -95,6 +102,14 @@ public class NetworkManager : MonoBehaviour
 	{
 		msgList.Add(m);
 	}
+	public void ready()
+    {
+		pioconnection.Send("Ready");
+    }
+	public void startGame()
+    {
+		pioconnection.Send("StartGame");
+    }
 
 	void FixedUpdate()
 	{
@@ -123,50 +138,50 @@ public class NetworkManager : MonoBehaviour
 					//iTween.MoveTo(upplayer, iTween.Hash("x", m.GetFloat(1), "z", m.GetFloat(2), "onstart", "startwalk", "oncomplete", "stopwalk", "time", dist, "delay", 0, "easetype", iTween.EaseType.linear));
 					break;
 
-				case "Harvest":
-					GameObject hvplayer = GameObject.Find(m.GetString(0));
-					hvplayer.transform.LookAt(new Vector3(m.GetFloat(1), .5f, m.GetFloat(2)));
+				//case "Harvest":
+				//	GameObject hvplayer = GameObject.Find(m.GetString(0));
+				//	hvplayer.transform.LookAt(new Vector3(m.GetFloat(1), .5f, m.GetFloat(2)));
 
-					// set transform x axis to 0, so the character will be facing forward
-					hvplayer.transform.eulerAngles = new Vector3(0, hvplayer.transform.eulerAngles.y, hvplayer.transform.eulerAngles.z);
+				//	// set transform x axis to 0, so the character will be facing forward
+				//	hvplayer.transform.eulerAngles = new Vector3(0, hvplayer.transform.eulerAngles.y, hvplayer.transform.eulerAngles.z);
 
-					// get distance between current position and target position,
-					// we'll need to value to know how much the tween will last
-					float distance = Vector3.Distance(hvplayer.transform.position, new Vector3(m.GetFloat(1), 0, m.GetFloat(2)));
-					// create a tween between current and target position
-					//iTween.MoveTo(hvplayer, iTween.Hash("x", m.GetFloat(1), "z", m.GetFloat(2), "onstart", "startwalk", "oncomplete", "stopharvest", "time", distance, "delay", 0, "easetype", iTween.EaseType.linear));
-					break;
-				case "Picked":
-					// remove the object when it's picked up
-					GameObject removetoad = GameObject.Find("Toad" + m.GetInt(0));
-					Destroy(removetoad);
+				//	// get distance between current position and target position,
+				//	// we'll need to value to know how much the tween will last
+				//	float distance = Vector3.Distance(hvplayer.transform.position, new Vector3(m.GetFloat(1), 0, m.GetFloat(2)));
+				//	// create a tween between current and target position
+				//	//iTween.MoveTo(hvplayer, iTween.Hash("x", m.GetFloat(1), "z", m.GetFloat(2), "onstart", "startwalk", "oncomplete", "stopharvest", "time", distance, "delay", 0, "easetype", iTween.EaseType.linear));
+				//	break;
+				//case "Picked":
+				//	// remove the object when it's picked up
+				//	GameObject removetoad = GameObject.Find("Toad" + m.GetInt(0));
+				//	Destroy(removetoad);
 
-					break;
-				case "Chat":
-					if (m.GetString(0) != "Server")
-					{
-						GameObject chatplayer = GameObject.Find(m.GetString(0));
-						chatplayer.transform.Find("Chat").GetComponent<TextMesh>().text = m.GetString(1);
-						chatplayer.transform.Find("Chat").GetComponent<MeshRenderer>().material.color = Color.white;
-						//chatplayer.transform.Find("Chat").GetComponent<chatclear>().lastupdate = Time.time;
-					}
-					ChatText(m.GetString(0) + " says: " + m.GetString(1), false);
-					break;
+				//	break;
+				//case "Chat":
+				//	if (m.GetString(0) != "Server")
+				//	{
+				//		GameObject chatplayer = GameObject.Find(m.GetString(0));
+				//		chatplayer.transform.Find("Chat").GetComponent<TextMesh>().text = m.GetString(1);
+				//		chatplayer.transform.Find("Chat").GetComponent<MeshRenderer>().material.color = Color.white;
+				//		//chatplayer.transform.Find("Chat").GetComponent<chatclear>().lastupdate = Time.time;
+				//	}
+				//	ChatText(m.GetString(0) + " says: " + m.GetString(1), false);
+				//	break;
 				case "PlayerLeft":
 					// remove characters from the scene when they leave
 					GameObject playerd = GameObject.Find(m.GetString(0));
 					Destroy(playerd);
 					break;
-				case "Toad":
-					// adds a toadstool to the scene
-					//GameObject newtoad = GameObject.Instantiate(ToadPrefab) as GameObject;
-					//newtoad.transform.position = new Vector3(m.GetFloat(1), 0.1f, m.GetFloat(2));
-					//newtoad.name = "Toad" + m.GetInt(0);
-					break;
-				case "ToadCount":
-					// updates how many toads have been picked up by the player
-					toadspicked = m.GetInt(0);
-					break;
+				//case "Toad":
+				//	// adds a toadstool to the scene
+				//	//GameObject newtoad = GameObject.Instantiate(ToadPrefab) as GameObject;
+				//	//newtoad.transform.position = new Vector3(m.GetFloat(1), 0.1f, m.GetFloat(2));
+				//	//newtoad.name = "Toad" + m.GetInt(0);
+				//	break;
+				//case "ToadCount":
+				//	// updates how many toads have been picked up by the player
+				//	toadspicked = m.GetInt(0);
+				//	break;
 				case "ChangeRoom":
 					clientRoom.Multiplayer.CreateJoinRoom(
 						m.GetInt(0).ToString(),                    //Room id. If set to null a random roomid is used
@@ -175,7 +190,7 @@ public class NetworkManager : MonoBehaviour
 						null,
 						null,
 						delegate (Connection connection) {
-							Debug.Log("Joined GameplayRoom.");
+							Debug.Log("Joined GameplayRoom." + m.GetInt(0).ToString());
 							infomsg = "Joined Room.";
 							// We successfully joined a room so set up the message handler
 							pioconnection = connection;
@@ -187,6 +202,13 @@ public class NetworkManager : MonoBehaviour
 							infomsg = error.ToString();
 						}
 					);
+					break;
+				case "OpponentReady":
+					isOpponentReady = true;
+					Debug.Log(isOpponentReady);
+					break;
+				case "StartGame":
+					SceneManager.LoadScene("GameScene");
 					break;
 			}
 		}
@@ -219,92 +241,82 @@ public class NetworkManager : MonoBehaviour
 	}
 
 
-	void OnGUI()
-	{
-		window = GUI.Window(1, window, GlobalChatWindow, "Chat");
-		GUI.Label(new Rect(10, 160, 150, 20), "Toadstools picked: " + toadspicked);
-		if (infomsg != "")
-		{
-			GUI.Label(new Rect(10, 180, Screen.width, 20), infomsg);
-		}
-	}
+	//void OnGUI()
+	//{
+	//	window = GUI.Window(1, window, GlobalChatWindow, "Chat");
+	//	GUI.Label(new Rect(10, 160, 150, 20), "Toadstools picked: " + toadspicked);
+	//	if (infomsg != "")
+	//	{
+	//		GUI.Label(new Rect(10, 180, Screen.width, 20), infomsg);
+	//	}
+	//}
 
-	public void HarvestAt(float posx, float posz)
-	{
-		pioconnection.Send("MoveHarvest", posx, posz);
-	}
+	//void GlobalChatWindow(int id)
+	//{
 
-	public void TryPickup(string id)
-	{
-		pioconnection.Send("Pickup", id);
-	}
+	//	if (!joinedroom)
+	//	{
+	//		return;
+	//	}
 
-	void GlobalChatWindow(int id)
-	{
+	//	GUI.FocusControl("Chat input field");
 
-		if (!joinedroom)
-		{
-			return;
-		}
+	//	// Begin a scroll view. All rects are calculated automatically - 
+	//	// it will use up any available screen space and make sure contents flow correctly.
+	//	// This is kept small with the last two parameters to force scrollbars to appear.
+	//	scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
-		GUI.FocusControl("Chat input field");
+	//	foreach (ChatEntry entry in entries)
+	//	{
+	//		GUILayout.BeginHorizontal();
+	//		if (!entry.mine)
+	//		{
+	//			GUILayout.Label(entry.text);
+	//		}
+	//		else
+	//		{
+	//			GUI.contentColor = Color.yellow;
+	//			GUILayout.Label(entry.text);
+	//			GUI.contentColor = Color.white;
+	//		}
 
-		// Begin a scroll view. All rects are calculated automatically - 
-		// it will use up any available screen space and make sure contents flow correctly.
-		// This is kept small with the last two parameters to force scrollbars to appear.
-		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+	//		GUILayout.EndHorizontal();
+	//		GUILayout.Space(3);
 
-		foreach (ChatEntry entry in entries)
-		{
-			GUILayout.BeginHorizontal();
-			if (!entry.mine)
-			{
-				GUILayout.Label(entry.text);
-			}
-			else
-			{
-				GUI.contentColor = Color.yellow;
-				GUILayout.Label(entry.text);
-				GUI.contentColor = Color.white;
-			}
+	//	}
+	//	// End the scrollview we began above.
+	//	GUILayout.EndScrollView();
 
-			GUILayout.EndHorizontal();
-			GUILayout.Space(3);
+	//	if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return && inputField.Length > 0)
+	//	{
 
-		}
-		// End the scrollview we began above.
-		GUILayout.EndScrollView();
+	//		//GameObject chatplayer = GameObject.Find(target.transform.name);
+	//		//chatplayer.transform.Find("Chat").GetComponent<TextMesh>().text = inputField;
+	//		//chatplayer.transform.Find("Chat").GetComponent<MeshRenderer>().material.color = Color.white;
+	//		//chatplayer.transform.Find("Chat").GetComponent<chatclear>().lastupdate = Time.time;
 
-		if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return && inputField.Length > 0)
-		{
+	//		//ChatText(target.transform.name + " says: " + inputField, true);
+	//		pioconnection.Send("Chat", inputField);
+	//		inputField = "";
+	//	}
+	//	GUI.SetNextControlName("Chat input field");
+	//	inputField = GUILayout.TextField(inputField);
 
-			//GameObject chatplayer = GameObject.Find(target.transform.name);
-			//chatplayer.transform.Find("Chat").GetComponent<TextMesh>().text = inputField;
-			//chatplayer.transform.Find("Chat").GetComponent<MeshRenderer>().material.color = Color.white;
-			//chatplayer.transform.Find("Chat").GetComponent<chatclear>().lastupdate = Time.time;
-
-			//ChatText(target.transform.name + " says: " + inputField, true);
-			pioconnection.Send("Chat", inputField);
-			inputField = "";
-		}
-		GUI.SetNextControlName("Chat input field");
-		inputField = GUILayout.TextField(inputField);
-
-		GUI.DragWindow();
-	}
+	//	GUI.DragWindow();
+	//}
 
 
-	void ChatText(string str, bool own)
-	{
-		var entry = new ChatEntry();
-		entry.text = str;
-		entry.mine = own;
+	//void ChatText(string str, bool own)
+	//{
+	//	var entry = new ChatEntry();
+	//	entry.text = str;
+	//	entry.mine = own;
 
-		entries.Add(entry);
+	//	entries.Add(entry);
 
-		if (entries.Count > 50)
-			entries.RemoveAt(0);
+	//	if (entries.Count > 50)
+	//		entries.RemoveAt(0);
 
-		scrollPosition.y = 1000000;
-	}
+	//	scrollPosition.y = 1000000;
+	//}
 }

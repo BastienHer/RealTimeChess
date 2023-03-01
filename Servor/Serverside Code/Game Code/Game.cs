@@ -44,35 +44,22 @@ namespace MushroomsUnity3DExample {
 			// respawn new toads each 5 seconds
 			//AddTimer(respawntoads, 5000);
 			// reset game every 2 minutes
-			AddTimer(resetgame, 120000);
+			//AddTimer(resetgame, 120000);
 
 
 		}
 
-		private void resetgame() {
-			// scoring system
-			Player winner = new Player();
-			int maxscore = -1;
-			foreach(Player pl in Players) {
-				if(pl.toadspicked > maxscore) {
-					winner = pl;
-					maxscore = pl.toadspicked;
-				}
-			}
-
-			// broadcast who won the round
-			if(winner.toadspicked > 0) {
-				Broadcast("Chat", "Server", winner.ConnectUserId + " picked " + winner.toadspicked + " Toadstools and won this round.");
-			} else {
-				Broadcast("Chat", "Server", "No one won this round.");
-			}
-
-			// reset everyone's score
-			foreach(Player pl in Players) {
-				pl.toadspicked = 0;
-			}
-			Broadcast("ToadCount", 0);
-		}
+		//private void resetgame() {
+		//	// scoring system
+		//	Player winner = new Player();
+		//	int maxscore = -1;
+		//	foreach(Player pl in Players) {
+		//		if(pl.toadspicked > maxscore) {
+		//			winner = pl;
+		//			maxscore = pl.toadspicked;
+		//		}
+		//	}
+		//}
 
 		//private void respawntoads() {
 		//	if(Toads.Count == 10)
@@ -115,15 +102,24 @@ namespace MushroomsUnity3DExample {
 				Random rdn = new Random();
 				int randomRoom = rdn.Next(1, int.MaxValue);
 				Broadcast("ChangeRoom",randomRoom);
-				player.Disconnect();
-				Console.WriteLine(this.PlayerCount);
-			}
-			
 
-			// send current toadstool info to the player
-			foreach(Toad t in Toads) {
-				player.Send("Toad", t.id, t.posx, t.posz);
+
+				List<Player> newPlayers = new List<Player>(Players);
+				foreach (Player pl in newPlayers)
+				{
+					Console.WriteLine("deconnect" + pl.Id);
+					pl.Disconnect();
+				}
+    //            if (this.PlayerCount > 0)
+    //            {
+				//	foreach (Player pl in Players)
+				//	{
+				//		pl.Disconnect();
+				//	}
+				//}
 			}
+			Console.WriteLine(this.PlayerCount);
+
 		}
 
 		// This method is called when a player leaves the game
@@ -135,51 +131,51 @@ namespace MushroomsUnity3DExample {
 		public override void GotMessage(Player player, Message message) {
 			switch(message.Type) {
 				// called when a player clicks on the ground
-				case "Move":
-					player.posx = message.GetFloat(0);
-					player.posz = message.GetFloat(1);
-					Broadcast("Move", player.ConnectUserId, player.posx, player.posz);
-					break;
-				case "MoveHarvest":
-					// called when a player clicks on a harvesting node
-					// sends back a harvesting command to the player, a move command to everyone else
-					player.posx = message.GetFloat(0);
-					player.posz = message.GetFloat(1);
-					foreach(Player pl in Players) {
-						if(pl.ConnectUserId != player.ConnectUserId) {
-							pl.Send("Move", player.ConnectUserId, player.posx, player.posz);
-						}
-					}
-					player.Send("Harvest", player.ConnectUserId, player.posx, player.posz);
-					break;
-				case "Pickup":
-					// called when the player is actually close to the harvesting node
-					int pickupid = int.Parse(message.GetString(0).Replace("Toad", ""));
+				//case "Move":
+				//	player.posx = message.GetFloat(0);
+				//	player.posz = message.GetFloat(1);
+				//	Broadcast("Move", player.ConnectUserId, player.posx, player.posz);
+				//	break;
+				//case "MoveHarvest":
+				//	// called when a player clicks on a harvesting node
+				//	// sends back a harvesting command to the player, a move command to everyone else
+				//	player.posx = message.GetFloat(0);
+				//	player.posz = message.GetFloat(1);
+				//	foreach(Player pl in Players) {
+				//		if(pl.ConnectUserId != player.ConnectUserId) {
+				//			pl.Send("Move", player.ConnectUserId, player.posx, player.posz);
+				//		}
+				//	}
+				//	player.Send("Harvest", player.ConnectUserId, player.posx, player.posz);
+				//	break;
+				//case "Pickup":
+				//	// called when the player is actually close to the harvesting node
+				//	int pickupid = int.Parse(message.GetString(0).Replace("Toad", ""));
 
-					// Find a toad by its id
-					Toad result = Toads.Find( delegate(Toad td) { return td.id == pickupid; } );
+				//	// Find a toad by its id
+				//	Toad result = Toads.Find( delegate(Toad td) { return td.id == pickupid; } );
 
-					if(result != null) {
-						// sends everyone information that a toad as been picked up
-						// increases player toad count
-						Broadcast("Picked", result.id);
-						Toads.Remove(result);
-						player.toadspicked++;
-						player.Send("ToadCount", player.toadspicked);
-					} else {
-						// id of the toad doesn't exist, either the player
-						// is trying to cheat, or someone else already picked 
-						// that toadstool
-						Console.WriteLine("Not found: {0}", pickupid);
-					}
-					break;
-				case "Chat":
-					foreach(Player pl in Players) {
-						if(pl.ConnectUserId != player.ConnectUserId) {
-							pl.Send("Chat", player.ConnectUserId, message.GetString(0));
-						}
-					}
-					break;
+				//	if(result != null) {
+				//		// sends everyone information that a toad as been picked up
+				//		// increases player toad count
+				//		Broadcast("Picked", result.id);
+				//		Toads.Remove(result);
+				//		player.toadspicked++;
+				//		player.Send("ToadCount", player.toadspicked);
+				//	} else {
+				//		// id of the toad doesn't exist, either the player
+				//		// is trying to cheat, or someone else already picked 
+				//		// that toadstool
+				//		Console.WriteLine("Not found: {0}", pickupid);
+				//	}
+				//	break;
+				//case "Chat":
+				//	foreach(Player pl in Players) {
+				//		if(pl.ConnectUserId != player.ConnectUserId) {
+				//			pl.Send("Chat", player.ConnectUserId, message.GetString(0));
+				//		}
+				//	}
+				//	break;
 			}
 		}
 	}

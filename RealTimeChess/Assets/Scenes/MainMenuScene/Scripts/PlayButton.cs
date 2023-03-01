@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class PlayButton : MonoBehaviour
 {
     // Start is called before the first frame update
+
+    
     void Start()
     {
         
@@ -18,6 +20,11 @@ public class PlayButton : MonoBehaviour
     }
     public void LoadGameScene()
     {
-        SceneManager.LoadScene("GameScene");
+        NetworkManager.instance.ready();
+        if (NetworkManager.instance.isOpponentReady == true)
+        {
+            NetworkManager.instance.startGame();
+ 
+        }
     }
 }
