@@ -67,4 +67,70 @@ public class ChessMan : MonoBehaviour
     {
         yboard = y;
     }
+    private void OnMouseUp()
+    {
+        DestroyMovePlates();
+        InitiateMovePlates();
+    }
+    public void DestroyMovePlates()
+    {
+        GameObject[] movePlates = GameObject.FindGameObjectsWithTag("MovePlate");
+        for(int i = 0; i < movePlates.Length; i++)
+        {
+            Destroy(movePlates[i]);
+        }
+    }
+    public void InitiateMovePlates()
+    {
+        switch (this.name)
+        {
+            case "BlackQueen": 
+            case "WhiteQueen":
+                LineMovePlate(1,0);
+                LineMovePlate(0, 1);
+                LineMovePlate(1, 1);
+                LineMovePlate(-1, 0);
+                LineMovePlate(0, -1);
+                LineMovePlate(-1, -1);
+                LineMovePlate(1, -1);
+                LineMovePlate(-1, 1);
+                break;
+            case "BlackKnight": 
+            case "WhiteKnight":
+                LMovePlate();
+                break;
+            case "BlackBishop": 
+            case "WhiteBishop":
+                LineMovePlate(1, 1);
+                LineMovePlate(-1, -1);
+                LineMovePlate(1, -1);
+                LineMovePlate(-1, 1);
+                break;
+            case "BlackKing": 
+            case " WhiteKing":
+                SurroundMovePlate();
+                break;
+
+            case "BlackRook": this.GetComponent<SpriteRenderer>().sprite = BlackRook; break;
+            case "BlackPawn": this.GetComponent<SpriteRenderer>().sprite = BlackPawn; break;
+
+
+
+
+            case "WhiteRook": this.GetComponent<SpriteRenderer>().sprite = WhiteRook; break;
+            case "WhitePawn": this.GetComponent<SpriteRenderer>().sprite = WhitePawn; break;
+        }
+    }
+
+    public void LineMovePlate(int x,int y)
+    {
+
+    }
+    public void LMovePlate() { 
+    
+    }
+    public void SurroundMovePlate()
+    {
+
+    }
 }
