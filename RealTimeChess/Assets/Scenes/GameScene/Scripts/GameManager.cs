@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -36,10 +38,6 @@ public class GameManager : MonoBehaviour
             SetPosition(playerBlack[i]);
         }
     }
-    void Update()
-    {
-        
-    }
     public GameObject Create(string name,int x,int y)
     {
         GameObject obj = Instantiate(chessPiece, new Vector3(0, 0, 0), Quaternion.identity);
@@ -70,5 +68,37 @@ public class GameManager : MonoBehaviour
             return false;
         }
         return true;
+    }
+    public string GetCurrentPlayer()
+    {
+        return currentplayer;
+    }
+    public bool IsGameOver() 
+    {
+        return gameOver; 
+    }
+    public void NextTurn()
+    {
+        if (currentplayer == "white")
+        {
+            currentplayer = "black";
+        }
+        else
+        {
+            currentplayer = "white";
+        }
+    }
+    public void Update()
+    {
+        if(gameOver==true&&Input.GetMouseButtonDown(0))
+        {
+            
+        }
+    }
+
+    public void Winner(string playerWInner)
+    {
+        Debug.Log("Win");
+        gameOver = true;
     }
 }
