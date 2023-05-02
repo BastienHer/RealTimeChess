@@ -29,11 +29,11 @@ public class MovePlate : MonoBehaviour
             GameObject cp = controller[0].GetComponent<GameManager>().getPosition(matrixX,matrixY);
             if(cp.name== "WhiteKing")
             {
-                controller[0].GetComponent<GameManager>().Winner("black");
+                NetworkManager.instance.pioconnection.Send("BlackWins");
             }
             if (cp.name == "BlackKing")
             {
-                controller[0].GetComponent<GameManager>().Winner("white");
+                NetworkManager.instance.pioconnection.Send("WhiteWins");
             }
             Destroy(cp);
         }
@@ -43,8 +43,9 @@ public class MovePlate : MonoBehaviour
         reference.GetComponent<ChessMan>().SetYBoard(matrixY);
         reference.GetComponent<ChessMan>().SetCoords();
 
-        controller[0].GetComponent<GameManager>().SetPosition(reference);
-        controller[0].GetComponent<GameManager>().NextTurn();
+        controller[0].GetComponent<GameManager>().SetPosition2(reference, reference.GetComponent<ChessMan>().previousX, reference.GetComponent<ChessMan>().previousY, reference.GetComponent<ChessMan>().name);
+
+        //controller[0].GetComponent<GameManager>().NextTurn();
         reference.GetComponent<ChessMan>().DestroyMovePlates();
     }
     public void SetCoords(int x,int y)

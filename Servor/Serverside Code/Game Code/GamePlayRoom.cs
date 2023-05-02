@@ -15,6 +15,7 @@ namespace MushroomsUnity3DExample
         {
             // anything you write to the Console will show up in the 
             // output window of the development server
+            
             Console.WriteLine("Game is started: " + RoomId);
         }
 
@@ -58,8 +59,36 @@ namespace MushroomsUnity3DExample
                     }
                     break;
                 case "StartGame":
-                    Broadcast("StartGame");
+                    foreach (Player pl in Players)
+                    {
+                        Broadcast("StartGame");
+                        if (player != pl)
+                        {
+                            pl.Send("white");
+                        }
+                        else
+                        {
+                            pl.Send("black");
+                        }
+                    }
                     break;
+                case "Move":
+                    foreach(Player pl in Players)
+                    {
+                        if(player != pl)
+                        {
+                            pl.Send("Move", message[0], message[1], message[2], message[3], message[4]);
+                        }
+                    }
+                    
+                    break;
+                case "WhiteWins":
+                    Broadcast("WhiteWins");
+                    break;
+                case "BlackWins":
+                    Broadcast("BlackWins");
+                    break;
+                          
             }
         }
     }

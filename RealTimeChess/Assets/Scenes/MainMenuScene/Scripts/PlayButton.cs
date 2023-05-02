@@ -27,4 +27,8 @@ public class PlayButton : MonoBehaviour
  
         }
     }
+    public void loadMenuScene()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+    }
 }

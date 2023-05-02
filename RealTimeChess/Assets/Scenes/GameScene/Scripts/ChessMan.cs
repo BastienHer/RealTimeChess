@@ -9,7 +9,7 @@ public class ChessMan : MonoBehaviour
 
     public Sprite BlackQueen, BlackKing, BlackBishop, BlackKnight, BlackRook, BlackPawn;
     public Sprite WhiteQueen, WhiteKing, WhiteBishop, WhiteKnight, WhiteRook, WhitePawn;
-
+    public int previousX,previousY = 0;
     private int xboard = -1;
     private int yboard = -1;
 
@@ -69,7 +69,9 @@ public class ChessMan : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        if (!controller[0].GetComponent<GameManager>().IsGameOver() && controller[0].GetComponent<GameManager>().GetCurrentPlayer() == player)
+        previousX= xboard;
+        previousY= yboard;
+        if (!controller[0].GetComponent<GameManager>().IsGameOver() && NetworkManager.instance.player == player)
         {
             DestroyMovePlates();
             InitiateMovePlates();

@@ -7,3 +7,12 @@ C:\Users\hbastien\Documents\GitHub\Bastien_Her\RealTimeChess\Servor\Serverside C
 C:\Users\hbastien\Documents\GitHub\Bastien_Her\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\MushroomsUnity3DExample.dll
 C:\Users\hbastien\Documents\GitHub\Bastien_Her\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\MushroomsUnity3DExample.pdb
 C:\Users\hbastien\Documents\GitHub\Bastien_Her\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\Game Code.csproj.AssemblyReference.cache
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\bin\Debug\MushroomsUnity3DExample.dll
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\bin\Debug\MushroomsUnity3DExample.pdb
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\bin\Debug\Player.IO GameLibrary.dll
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\bin\Debug\Player.IO GameLibrary.xml
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\Game Code.csproj.AssemblyReference.cache
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\Game Code.csproj.CoreCompileInputs.cache
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\Game Code.csproj.CopyComplete
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\MushroomsUnity3DExample.dll
+D:\Github\RealTimeChess\Servor\Serverside Code\Game Code\obj\Debug\MushroomsUnity3DExample.pdb

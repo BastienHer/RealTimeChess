@@ -7,11 +7,22 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public GameObject chessPiece;
-    private GameObject[,] positions = new GameObject[8, 8];
+    public static GameManager instance;
+    public GameObject[,] positions = new GameObject[8, 8];
     private GameObject[] playerBlack = new GameObject[16];
     private GameObject[] playerWhite = new GameObject[16];
     private string currentplayer = "white";
     private bool gameOver = false;
+
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+        }
+        instance = this;
+    }
     void Start()
     {
         playerWhite = new GameObject[]
@@ -50,12 +61,23 @@ public class GameManager : MonoBehaviour
     }
     public void SetPosition(GameObject obj)
     {
+        ChessMan cm = obj.GetComponent<ChessMan>(); 
+        positions[cm.GetXBoard(), cm.GetYBoard()] = obj;
+    }
+    public void SetPosition2(GameObject obj, int previousX, int previousY,string name)
+    {
         ChessMan cm = obj.GetComponent<ChessMan>();
+        NetworkManager.instance.pioconnection.Send("Move", cm.GetXBoard(), cm.GetYBoard(), previousX, previousY,name);
         positions[cm.GetXBoard(), cm.GetYBoard()] = obj;
     }
     public void SetPositionEmpty(int x,int y)
     {
+
         positions[x, y] = null;
+    }
+    public void DestroyPosition(int x,int y)
+    {
+        Destroy(positions[x, y]);
     }
     public GameObject getPosition(int x,int y)
     {
@@ -69,25 +91,25 @@ public class GameManager : MonoBehaviour
         }
         return true;
     }
-    public string GetCurrentPlayer()
-    {
-        return currentplayer;
-    }
+    //public string GetCurrentPlayer()
+    //{
+    //    return currentplayer;
+    //}
     public bool IsGameOver() 
     {
         return gameOver; 
     }
-    public void NextTurn()
-    {
-        if (currentplayer == "white")
-        {
-            currentplayer = "black";
-        }
-        else
-        {
-            currentplayer = "white";
-        }
-    }
+    //public void NextTurn()
+    //{
+    //    if (currentplayer == "white")
+    //    {
+    //        currentplayer = "black";
+    //    }
+    //    else
+    //    {
+    //        currentplayer = "white";
+    //    }
+    //}
     public void Update()
     {
         if(gameOver==true&&Input.GetMouseButtonDown(0))
